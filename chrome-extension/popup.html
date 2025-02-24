@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Highlight.ai</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="popup-container">
+        <header class="header">
+            <h1>Highlight.ai</h1>
+        </header>
+        <div class="content-container">
+            <div class="settings-section">
+                <h3>Settings</h3>
+                <div class="setting-item">
+                    <label>Auto-summarize:</label>
+                    <input type="checkbox" id="autoSummarize" class="toggle-input">
+                </div>
+                <div class="setting-item">
+                    <label>Notion Integration:</label>
+                    <input type="text" id="notionToken" placeholder="Enter Notion API token" class="text-input">
+                </div>
+            </div>
+            <div class="info-section">
+                <p>Select text on any webpage to summarize or save to Notion!</p>
+            </div>
+        </div>
+    </div>
+    <script src="popup.js"></script>
+</body>
+</html>
