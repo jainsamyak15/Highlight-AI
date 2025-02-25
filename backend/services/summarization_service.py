@@ -19,7 +19,7 @@ class SummarizationService:
             together.api_key = os.getenv("TOGETHER_API_KEY")
             client = together.Together()
             response = client.chat.completions.create(
-                model="meta-llama/Llama-3.3-70B-Instruct-Turbo",
+                model="mistralai/Mixtral-8x7B-Instruct-v0.1",
                 messages=[
                     {"role": "system", "content": "You are a helpful assistant that creates concise summaries."},
                     {"role": "user", "content": f"Please provide a concise summary of the following text:\n\n{text}"}

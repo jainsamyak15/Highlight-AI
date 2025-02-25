@@ -14,7 +14,7 @@ class ExplanationService:
             client = together.Together()
 
             response = client.chat.completions.create(
-                model="meta-llama/Llama-3.3-70B-Instruct-Turbo",
+                model="mistralai/Mixtral-8x7B-Instruct-v0.1",
                 messages=[
                     {"role": "user", "content": f"Please explain this text in simpler terms:\n\n{text}"}
                 ]
