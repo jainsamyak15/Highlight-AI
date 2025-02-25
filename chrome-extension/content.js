@@ -1,14 +1,13 @@
-// Global variables for menu management
+
 let selectedText = '';
 let floatingMenu = null;
 let dictionaryCache = new Map();
 
-// Create container for our extension UI
 const container = document.createElement('div');
 container.id = 'highlight-ai-container';
 document.body.appendChild(container);
 
-// Add scoped styles
+
 const style = document.createElement('style');
 style.textContent = `
   #highlight-ai-container {
@@ -140,7 +139,6 @@ style.textContent = `
 
 document.head.appendChild(style);
 
-// Create floating menu
 function createFloatingMenu(x, y) {
     const menu = document.createElement('div');
     menu.className = 'highlight-ai-menu';
@@ -179,7 +177,6 @@ function createFloatingMenu(x, y) {
     return menu;
 }
 
-// Handle text selection
 document.addEventListener('mouseup', (e) => {
     if (floatingMenu && floatingMenu.contains(e.target)) {
         return;
@@ -205,7 +202,6 @@ document.addEventListener('mouseup', (e) => {
     }
 });
 
-// Handle clicks outside the menu
 document.addEventListener('mousedown', (e) => {
     if (floatingMenu && !floatingMenu.contains(e.target)) {
         floatingMenu.remove();
@@ -213,7 +209,6 @@ document.addEventListener('mousedown', (e) => {
     }
 });
 
-// Fetch dictionary definition
 async function fetchDefinition(word) {
     if (dictionaryCache.has(word)) {
         return dictionaryCache.get(word);
@@ -240,7 +235,6 @@ async function fetchDefinition(word) {
     }
 }
 
-// Handle menu button clicks
 function attachMenuListeners(menu) {
     const summarizeBtn = menu.querySelector('.summarize');
     const defineBtn = menu.querySelector('.define');
@@ -255,7 +249,7 @@ function attachMenuListeners(menu) {
             });
 
             if (response.success) {
-                showNotification('Summary', response.summary, 8000); // Increased duration to 8 seconds
+                showNotification('Summary', response.summary, 12000);
             }
         } catch (error) {
             showNotification('Error', 'Failed to generate summary', 5000);
@@ -278,7 +272,7 @@ function attachMenuListeners(menu) {
 
             definitionHtml += '</div>';
 
-            showNotification('Definition', definitionHtml, 10000); // Increased duration to 10 seconds
+            showNotification('Definition', definitionHtml, 15000);
         } else {
             showNotification('Error', 'Definition not found', 5000);
         }
@@ -292,7 +286,7 @@ function attachMenuListeners(menu) {
             });
 
             if (response.success) {
-                showNotification('Explanation', response.explanation, 12000); // Increased duration to 12 seconds
+                showNotification('Explanation', response.explanation, 15000);
             }
         } catch (error) {
             showNotification('Error', 'Failed to generate explanation', 5000);
@@ -319,9 +313,7 @@ function attachMenuListeners(menu) {
     });
 }
 
-// Show notification
 function showNotification(title, message, duration = 3000) {
-    // Remove any existing notifications
     const existingNotifications = document.querySelectorAll('.highlight-ai-notification');
     existingNotifications.forEach(notification => notification.remove());
 
@@ -334,7 +326,6 @@ function showNotification(title, message, duration = 3000) {
 
     container.appendChild(notification);
 
-    // Add close button
     const closeButton = document.createElement('button');
     closeButton.innerHTML = '×';
     closeButton.style.cssText = `
@@ -351,18 +342,15 @@ function showNotification(title, message, duration = 3000) {
     closeButton.addEventListener('click', () => notification.remove());
     notification.appendChild(closeButton);
 
-    // Set timeout for auto-removal
     const timeoutId = setTimeout(() => {
         if (notification.parentNode) {
             notification.remove();
         }
     }, duration);
 
-    // Clear timeout if user manually closes
     closeButton.addEventListener('click', () => clearTimeout(timeoutId));
 }
 
-// Initialize offline storage
 const offlineStorage = {
     async saveHighlight(highlight) {
         const highlights = await this.getHighlights();
@@ -402,7 +390,6 @@ const offlineStorage = {
     }
 };
 
-// Listen for online/offline events
 window.addEventListener('online', () => {
     offlineStorage.syncHighlights();
 });

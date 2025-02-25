@@ -7,7 +7,6 @@ class NotionService:
     async def save_to_notion(highlight: Highlight, page_id: str):
         """Save highlight to a Notion page"""
         try:
-            # Create a new page in the specified database
             new_page = notion.pages.create(
                 parent={"database_id": page_id},
                 properties={

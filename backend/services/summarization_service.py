@@ -15,7 +15,6 @@ class SummarizationService:
             str: The generated summary.
         """
         try:
-            # Initialize Together client with API key
             together.api_key = os.getenv("TOGETHER_API_KEY")
             client = together.Together()
             response = client.chat.completions.create(

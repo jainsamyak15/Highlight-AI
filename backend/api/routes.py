@@ -19,7 +19,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize services
 summarization_service = SummarizationService()
 explanation_service = ExplanationService()
 
@@ -78,10 +77,8 @@ async def save_highlight(request: SaveRequest):
     Save a highlight to Supabase and optionally to Notion
     """
     try:
-        # Save to Supabase first
         saved_highlight = await HighlightService.create_highlight(request.highlight)
 
-        # If Notion token is provided, save to Notion as well
         if request.notion_token:
             try:
                 await NotionService.save_to_notion(

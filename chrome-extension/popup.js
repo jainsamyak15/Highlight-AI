@@ -1,4 +1,4 @@
-// State management
+
 let userState = {
     isAuthenticated: false,
     email: null,
@@ -6,7 +6,7 @@ let userState = {
     highlights: []
 };
 
-// DOM Elements
+
 document.addEventListener('DOMContentLoaded', function() {
     const authContainer = document.getElementById('authContainer');
     const contentContainer = document.getElementById('contentContainer');
@@ -17,16 +17,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const autoSummarize = document.getElementById('autoSummarize');
     const highlightsList = document.getElementById('highlightsList');
 
-    // Initialize
+
     checkAuthState();
 
-    // Event Listeners
     loginBtn.addEventListener('click', handleLogin);
     logoutBtn.addEventListener('click', handleLogout);
     defaultLocation.addEventListener('change', updateSettings);
     autoSummarize.addEventListener('change', updateSettings);
 
-    // Load user settings from storage
     chrome.storage.sync.get(['settings'], function(result) {
         if (result.settings) {
             defaultLocation.value = result.settings.defaultLocation || 'notion';
@@ -62,14 +60,12 @@ function showUnauthenticatedUI() {
 
 async function handleLogin() {
     try {
-        // Launch Google OAuth flow
         chrome.identity.getAuthToken({ interactive: true }, function(token) {
             if (chrome.runtime.lastError) {
                 console.error(chrome.runtime.lastError);
                 return;
             }
 
-            // Get user info from Google
             fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
                 headers: { Authorization: `Bearer ${token}` }
             })
@@ -105,7 +101,6 @@ function updateSettings() {
     };
 
     chrome.storage.sync.set({ settings }, function() {
-        // Show success message
         const message = document.createElement('div');
         message.className = 'success-message';
         message.textContent = 'Settings saved!';

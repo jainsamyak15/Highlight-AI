@@ -9,7 +9,6 @@ class ExplanationService:
         Generate a simplified explanation of the text using Together AI.
         """
         try:
-            # Initialize Together client
             together.api_key = os.getenv("TOGETHER_API_KEY")
             client = together.Together()
 
