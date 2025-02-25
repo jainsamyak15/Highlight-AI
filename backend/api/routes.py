@@ -4,6 +4,7 @@ from models.schemas import Highlight
 from services.highlight_service import HighlightService
 from services.notion_service import NotionService
 from services.summarization_service import SummarizationService
+from services.explanation_service import ExplanationService
 from fastapi.middleware.cors import CORSMiddleware
 import together
 import os
@@ -20,28 +21,24 @@ app.add_middleware(
 
 # Initialize services
 summarization_service = SummarizationService()
-
+explanation_service = ExplanationService()
 
 class SummarizeRequest(BaseModel):
     text: str
     max_length: Optional[int] = 200
 
+class ExplainRequest(BaseModel):
+    text: str
 
 class SaveRequest(BaseModel):
     highlight: Highlight
     notion_token: Optional[str] = None
-
+    notion_page_id: Optional[str] = None
 
 @app.post("/api/summarize")
 async def summarize_text(request: SummarizeRequest):
     """
     Summarize the provided text using the Together AI API
-
-    Args:
-        request: SummarizeRequest containing text to summarize and optional max_length
-
-    Returns:
-        JSON with success status and generated summary
     """
     try:
         summary = await summarization_service.summarize_text(
@@ -58,17 +55,27 @@ async def summarize_text(request: SummarizeRequest):
             detail=f"Failed to generate summary: {str(e)}"
         )
 
+@app.post("/api/explain")
+async def explain_text(request: ExplainRequest):
+    """
+    Generate a simplified explanation of the text
+    """
+    try:
+        explanation = await explanation_service.explain_text(request.text)
+        return {
+            "success": True,
+            "explanation": explanation
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to generate explanation: {str(e)}"
+        )
 
 @app.post("/api/save")
 async def save_highlight(request: SaveRequest):
     """
     Save a highlight to Supabase and optionally to Notion
-
-    Args:
-        request: SaveRequest containing highlight data and optional Notion token
-
-    Returns:
-        JSON with success status and saved highlight data
     """
     try:
         # Save to Supabase first
@@ -79,10 +86,10 @@ async def save_highlight(request: SaveRequest):
             try:
                 await NotionService.save_to_notion(
                     highlight=request.highlight,
-                    notion_token=request.notion_token
+                    notion_token=request.notion_token,
+                    page_id=request.notion_page_id
                 )
             except Exception as notion_error:
-                # Log Notion error but don't fail the whole request
                 print(f"Failed to save to Notion: {str(notion_error)}")
                 return {
                     "success": True,
@@ -103,6 +110,22 @@ async def save_highlight(request: SaveRequest):
             detail=f"Failed to save highlight: {str(e)}"
         )
 
+@app.get("/api/notion/pages")
+async def get_notion_pages(notion_token: str):
+    """
+    Get list of available Notion pages
+    """
+    try:
+        pages = await NotionService.get_pages(notion_token)
+        return {
+            "success": True,
+            "pages": pages
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to fetch Notion pages: {str(e)}"
+        )
 
 @app.get("/api/health")
 async def health_check():

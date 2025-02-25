@@ -1,23 +1,40 @@
 // Global variables for menu management
 let selectedText = '';
 let floatingMenu = null;
+let dictionaryCache = new Map();
 
-// Add scoped styles to document
+// Create container for our extension UI
+const container = document.createElement('div');
+container.id = 'highlight-ai-container';
+document.body.appendChild(container);
+
+// Add scoped styles
 const style = document.createElement('style');
 style.textContent = `
+  #highlight-ai-container {
+    all: initial;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    z-index: 2147483647;
+  }
+
   .highlight-ai-menu {
+    all: initial;
     position: fixed;
     background: white;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     padding: 8px;
     z-index: 2147483647;
-    font-family: system-ui, -apple-system, sans-serif;
-    font-size: 14px;
-    width: auto;
-    height: auto;
-    margin: 0;
-    box-sizing: border-box;
+    pointer-events: auto;
+  }
+
+  .highlight-ai-menu * {
+    all: revert;
   }
 
   .highlight-ai-button-group {
@@ -25,11 +42,10 @@ style.textContent = `
     gap: 8px;
     margin: 0;
     padding: 0;
-    width: auto;
-    height: auto;
   }
 
   .highlight-ai-button {
+    all: initial;
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -38,14 +54,11 @@ style.textContent = `
     border-radius: 4px;
     background: #f3f4f6;
     cursor: pointer;
+    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu;
     font-size: 14px;
     color: #374151;
     transition: background 0.2s;
-    margin: 0;
-    width: auto;
-    height: auto;
-    min-width: auto;
-    line-height: normal;
+    pointer-events: auto;
   }
 
   .highlight-ai-button:hover {
@@ -55,10 +68,10 @@ style.textContent = `
   .highlight-ai-button svg {
     width: 16px;
     height: 16px;
-    flex-shrink: 0;
   }
 
   .highlight-ai-notification {
+    all: initial;
     position: fixed;
     bottom: 20px;
     right: 20px;
@@ -68,8 +81,12 @@ style.textContent = `
     padding: 16px;
     z-index: 2147483647;
     max-width: 300px;
-    font-family: system-ui, -apple-system, sans-serif;
-    box-sizing: border-box;
+    pointer-events: auto;
+    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu;
+  }
+
+  .highlight-ai-notification * {
+    all: revert;
   }
 
   .highlight-ai-notification h4 {
@@ -77,40 +94,85 @@ style.textContent = `
     font-size: 16px;
     color: #374151;
     font-weight: 500;
-    line-height: normal;
   }
 
   .highlight-ai-notification p {
     margin: 0;
     font-size: 14px;
     color: #6b7280;
-    line-height: normal;
+    line-height: 1.5;
+  }
+
+  .highlight-ai-definition {
+    all: initial;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 16px;
+    margin-top: 8px;
+    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu;
+    font-size: 14px;
+    color: #374151;
+    max-width: 300px;
+    pointer-events: auto;
+  }
+
+  .highlight-ai-definition * {
+    all: revert;
+  }
+
+  .highlight-ai-definition h5 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    color: #374151;
+  }
+
+  .highlight-ai-definition p {
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+  }
+
+  .highlight-ai-definition .pos {
+    color: #6b7280;
+    font-style: italic;
   }
 `;
+
 document.head.appendChild(style);
-// Create floating menu element
+
+// Create floating menu
 function createFloatingMenu(x, y) {
     const menu = document.createElement('div');
     menu.className = 'highlight-ai-menu';
     menu.innerHTML = `
         <div class="highlight-ai-button-group">
             <button class="highlight-ai-button summarize">
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <path d="M4 6h16M4 12h16M4 18h10" stroke-width="2" stroke-linecap="round"/>
                 </svg>
                 Summarize
             </button>
+            <button class="highlight-ai-button define">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-width="2"/>
+                </svg>
+                Define
+            </button>
+            <button class="highlight-ai-button explain">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Explain
+            </button>
             <button class="highlight-ai-button save-notion">
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-width="2"/>
                 </svg>
-                Save to Notion
+                Save
             </button>
         </div>
     `;
 
-    // Position the menu
-    menu.style.position = 'fixed';
     menu.style.left = `${x}px`;
     menu.style.top = `${y}px`;
 
@@ -119,12 +181,10 @@ function createFloatingMenu(x, y) {
 
 // Handle text selection
 document.addEventListener('mouseup', (e) => {
-    // Ignore if target is within our menu
     if (floatingMenu && floatingMenu.contains(e.target)) {
         return;
     }
 
-    // Remove existing menu
     if (floatingMenu) {
         floatingMenu.remove();
         floatingMenu = null;
@@ -133,7 +193,6 @@ document.addEventListener('mouseup', (e) => {
     const selection = window.getSelection();
     selectedText = selection.toString().trim();
 
-    // Show menu only if text is selected
     if (selectedText && selectedText.length > 0) {
         const rect = selection.getRangeAt(0).getBoundingClientRect();
         floatingMenu = createFloatingMenu(
@@ -141,7 +200,7 @@ document.addEventListener('mouseup', (e) => {
             rect.top + window.scrollY - 50
         );
 
-        document.body.appendChild(floatingMenu);
+        container.appendChild(floatingMenu);
         attachMenuListeners(floatingMenu);
     }
 });
@@ -154,9 +213,38 @@ document.addEventListener('mousedown', (e) => {
     }
 });
 
+// Fetch dictionary definition
+async function fetchDefinition(word) {
+    if (dictionaryCache.has(word)) {
+        return dictionaryCache.get(word);
+    }
+
+    try {
+        const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error('Word not found');
+        }
+
+        const definitions = data[0].meanings.map(meaning => ({
+            partOfSpeech: meaning.partOfSpeech,
+            definition: meaning.definitions[0].definition
+        }));
+
+        dictionaryCache.set(word, definitions);
+        return definitions;
+    } catch (error) {
+        console.error('Failed to fetch definition:', error);
+        return null;
+    }
+}
+
 // Handle menu button clicks
 function attachMenuListeners(menu) {
     const summarizeBtn = menu.querySelector('.summarize');
+    const defineBtn = menu.querySelector('.define');
+    const explainBtn = menu.querySelector('.explain');
     const notionBtn = menu.querySelector('.save-notion');
 
     summarizeBtn.addEventListener('click', async () => {
@@ -167,10 +255,47 @@ function attachMenuListeners(menu) {
             });
 
             if (response.success) {
-                showNotification('Summary generated!', response.summary);
+                showNotification('Summary', response.summary, 8000); // Increased duration to 8 seconds
             }
         } catch (error) {
-            showNotification('Error', 'Failed to generate summary');
+            showNotification('Error', 'Failed to generate summary', 5000);
+        }
+    });
+
+    defineBtn.addEventListener('click', async () => {
+        const word = selectedText.split(/\s+/)[0].toLowerCase();
+        const definitions = await fetchDefinition(word);
+
+        if (definitions) {
+            let definitionHtml = `<div class="highlight-ai-definition">
+                <h5>${word}</h5>`;
+
+            definitions.forEach(def => {
+                definitionHtml += `
+                    <p><span class="pos">${def.partOfSpeech}</span><br>
+                    ${def.definition}</p>`;
+            });
+
+            definitionHtml += '</div>';
+
+            showNotification('Definition', definitionHtml, 10000); // Increased duration to 10 seconds
+        } else {
+            showNotification('Error', 'Definition not found', 5000);
+        }
+    });
+
+    explainBtn.addEventListener('click', async () => {
+        try {
+            const response = await chrome.runtime.sendMessage({
+                action: 'explain',
+                text: selectedText
+            });
+
+            if (response.success) {
+                showNotification('Explanation', response.explanation, 12000); // Increased duration to 12 seconds
+            }
+        } catch (error) {
+            showNotification('Error', 'Failed to generate explanation', 5000);
         }
     });
 
@@ -179,29 +304,105 @@ function attachMenuListeners(menu) {
             const response = await chrome.runtime.sendMessage({
                 action: 'save',
                 text: selectedText,
-                url: window.location.href
+                url: window.location.href,
+                title: document.title
             });
 
             if (response.success) {
-                showNotification('Success', 'Saved to Notion!');
+                showNotification('Success', 'Saved to Notion!', 3000);
+            } else if (response.error === 'no_token') {
+                showNotification('Error', 'Please set up Notion integration in the extension settings', 5000);
             }
         } catch (error) {
-            showNotification('Error', 'Failed to save to Notion');
+            showNotification('Error', 'Failed to save to Notion', 5000);
         }
     });
 }
 
 // Show notification
-function showNotification(title, message) {
+function showNotification(title, message, duration = 3000) {
+    // Remove any existing notifications
+    const existingNotifications = document.querySelectorAll('.highlight-ai-notification');
+    existingNotifications.forEach(notification => notification.remove());
+
     const notification = document.createElement('div');
     notification.className = 'highlight-ai-notification';
     notification.innerHTML = `
         <h4>${title}</h4>
-        <p>${message}</p>
+        ${typeof message === 'string' ? `<p>${message}</p>` : message}
     `;
 
-    document.body.appendChild(notification);
-    setTimeout(() => {
-        notification.remove();
-    }, 3000);
+    container.appendChild(notification);
+
+    // Add close button
+    const closeButton = document.createElement('button');
+    closeButton.innerHTML = '×';
+    closeButton.style.cssText = `
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: none;
+        border: none;
+        font-size: 20px;
+        color: #9CA3AF;
+        cursor: pointer;
+        padding: 0 5px;
+    `;
+    closeButton.addEventListener('click', () => notification.remove());
+    notification.appendChild(closeButton);
+
+    // Set timeout for auto-removal
+    const timeoutId = setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, duration);
+
+    // Clear timeout if user manually closes
+    closeButton.addEventListener('click', () => clearTimeout(timeoutId));
 }
+
+// Initialize offline storage
+const offlineStorage = {
+    async saveHighlight(highlight) {
+        const highlights = await this.getHighlights();
+        highlights.push({
+            ...highlight,
+            timestamp: new Date().toISOString(),
+            synced: false
+        });
+        await chrome.storage.local.set({ highlights });
+    },
+
+    async getHighlights() {
+        const data = await chrome.storage.local.get('highlights');
+        return data.highlights || [];
+    },
+
+    async syncHighlights() {
+        const highlights = await this.getHighlights();
+        const unsynced = highlights.filter(h => !h.synced);
+
+        for (const highlight of unsynced) {
+            try {
+                await chrome.runtime.sendMessage({
+                    action: 'save',
+                    text: highlight.text,
+                    url: highlight.url,
+                    title: highlight.title
+                });
+
+                highlight.synced = true;
+            } catch (error) {
+                console.error('Failed to sync highlight:', error);
+            }
+        }
+
+        await chrome.storage.local.set({ highlights });
+    }
+};
+
+// Listen for online/offline events
+window.addEventListener('online', () => {
+    offlineStorage.syncHighlights();
+});

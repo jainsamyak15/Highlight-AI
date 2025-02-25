@@ -1,16 +1,18 @@
 {
   "manifest_version": 3,
-  "name": "Highlight.ai",
+  "name": "Highlight.ai - Smart Reading Assistant",
   "version": "1.0.0",
-  "description": "Smart text highlighting with AI-powered summarization and Notion integration",
+  "description": "AI-powered reading comprehension and note-taking with Notion integration",
   "permissions": [
     "activeTab",
     "storage",
-    "scripting"
+    "scripting",
+    "contextMenus"
   ],
   "host_permissions": [
     "http://localhost:8000/*",
-    "https://api.notion.com/*"
+    "https://api.notion.com/*",
+    "https://api.dictionaryapi.dev/*"
   ],
   "action": {
     "default_popup": "popup.html",
@@ -28,5 +30,10 @@
       "js": ["content.js"],
       "css": ["styles.css"]
     }
-  ]
+  ],
+  "icons": {
+    "16": "icons/logo_13_0.png",
+    "48": "icons/logo_13_0.png",
+    "128": "icons/logo_13_0.png"
+  }
 }
