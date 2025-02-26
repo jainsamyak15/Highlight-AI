@@ -8,22 +8,63 @@
 <body>
     <div class="popup-container">
         <header class="header">
-            <h1>Highlight.ai</h1>
+            <div class="logo-section">
+                <img src="icons/logo_13_0.png" alt="Highlight.ai" class="logo">
+                <h1>Highlight.ai</h1>
+            </div>
+            <div id="userSection" class="user-section">
+                <span id="userEmail"></span>
+                <button id="logoutBtn" class="btn-logout">Logout</button>
+            </div>
         </header>
-        <div class="content-container">
+
+        <div id="authContainer" class="auth-container">
+            <h2>Welcome to Highlight.ai</h2>
+            <p>Sign in to save your highlights and preferences</p>
+            <button id="loginBtn" class="btn-primary">Sign in with Google</button>
+        </div>
+
+        <div id="contentContainer" class="content-container">
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <span id="todayCount">0</span>
+                    <h3>Today's Highlights</h3>
+                </div>
+                <div class="stat-card">
+                    <span id="totalCount">0</span>
+                    <h3>Total Highlights</h3>
+                </div>
+            </div>
+
             <div class="settings-section">
                 <h3>Settings</h3>
                 <div class="setting-item">
-                    <label>Auto-summarize:</label>
-                    <input type="checkbox" id="autoSummarize" class="toggle-input">
+                    <label for="notionToken">Notion Integration</label>
+                    <div class="input-group">
+                        <input type="password" id="notionToken" placeholder="Enter Notion API token" class="text-input">
+                        <button id="connectNotion" class="btn-secondary">Connect</button>
+                    </div>
                 </div>
                 <div class="setting-item">
-                    <label>Notion Integration:</label>
-                    <input type="text" id="notionToken" placeholder="Enter Notion API token" class="text-input">
+                    <label for="notionPage">Default Notion Page</label>
+                    <select id="notionPage" class="select-input" disabled>
+                        <option value="">Select a page</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label for="autoSummarize">Auto-summarize highlights</label>
+                    <label class="toggle">
+                        <input type="checkbox" id="autoSummarize">
+                        <span class="toggle-slider"></span>
+                    </label>
                 </div>
             </div>
-            <div class="info-section">
-                <p>Select text on any webpage to summarize or save to Notion!</p>
+
+            <div class="recent-section">
+                <h3>Recent Highlights</h3>
+                <div id="highlightsList" class="highlights-list">
+                    <!-- Highlights will be populated here -->
+                </div>
             </div>
         </div>
     </div>
