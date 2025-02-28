@@ -7,7 +7,8 @@
     "activeTab",
     "storage",
     "scripting",
-    "contextMenus"
+    "contextMenus",
+    "identity"
   ],
   "host_permissions": [
     "http://localhost:8000/*",
@@ -35,5 +36,11 @@
     "16": "icons/logo_13_0.png",
     "48": "icons/logo_13_0.png",
     "128": "icons/logo_13_0.png"
+  },
+  "oauth2": {
+    "client_id": "YOUR_NOTION_CLIENT_ID",
+    "scopes": [
+      "https://api.notion.com/v1/oauth/authorize"
+    ]
   }
 }

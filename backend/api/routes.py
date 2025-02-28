@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import together
 import os
 from pydantic import BaseModel
+import requests
 
 app = FastAPI()
 app.add_middleware(
@@ -22,17 +23,65 @@ app.add_middleware(
 summarization_service = SummarizationService()
 explanation_service = ExplanationService()
 
+
+class NotionTokenExchange(BaseModel):
+    code: str
+    redirectUri: Optional[str] = None
+
+
 class SummarizeRequest(BaseModel):
     text: str
     max_length: Optional[int] = 200
 
+
 class ExplainRequest(BaseModel):
     text: str
+
 
 class SaveRequest(BaseModel):
     highlight: Highlight
     notion_token: Optional[str] = None
     notion_page_id: Optional[str] = None
+
+
+@app.post("/api/notion/exchange-token")
+async def exchange_notion_token(request: NotionTokenExchange):
+    """
+    Exchange Notion OAuth code for access token
+    """
+    try:
+        # Get client ID and secret from environment variables
+        client_id = os.getenv("NOTION_CLIENT_ID")
+        client_secret = os.getenv("NOTION_CLIENT_SECRET")
+
+        if not client_id or not client_secret:
+            raise HTTPException(status_code=500, detail="Notion credentials not configured")
+
+        # Use the redirect URI from the request or fall back to a default
+        redirect_uri = request.redirectUri or os.getenv("NOTION_REDIRECT_URI")
+
+        response = requests.post(
+            "https://api.notion.com/v1/oauth/token",
+            json={
+                "grant_type": "authorization_code",
+                "code": request.code,
+                "redirect_uri": redirect_uri,
+                "client_id": client_id,
+                "client_secret": client_secret
+            },
+            headers={
+                "Content-Type": "application/json"
+            }
+        )
+
+        if response.status_code != 200:
+            error_detail = f"Failed to exchange token: {response.text}"
+            raise HTTPException(status_code=400, detail=error_detail)
+
+        return response.json()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.post("/api/summarize")
 async def summarize_text(request: SummarizeRequest):
@@ -54,6 +103,7 @@ async def summarize_text(request: SummarizeRequest):
             detail=f"Failed to generate summary: {str(e)}"
         )
 
+
 @app.post("/api/explain")
 async def explain_text(request: ExplainRequest):
     """
@@ -70,6 +120,7 @@ async def explain_text(request: ExplainRequest):
             status_code=500,
             detail=f"Failed to generate explanation: {str(e)}"
         )
+
 
 @app.post("/api/save")
 async def save_highlight(request: SaveRequest):
@@ -107,6 +158,7 @@ async def save_highlight(request: SaveRequest):
             detail=f"Failed to save highlight: {str(e)}"
         )
 
+
 @app.get("/api/notion/pages")
 async def get_notion_pages(notion_token: str):
     """
@@ -123,6 +175,7 @@ async def get_notion_pages(notion_token: str):
             status_code=500,
             detail=f"Failed to fetch Notion pages: {str(e)}"
         )
+
 
 @app.get("/api/health")
 async def health_check():

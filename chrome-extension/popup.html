@@ -12,42 +12,20 @@
                 <img src="icons/logo_13_0.png" alt="Highlight.ai" class="logo">
                 <h1>Highlight.ai</h1>
             </div>
-            <div id="userSection" class="user-section">
-                <span id="userEmail"></span>
-                <button id="logoutBtn" class="btn-logout">Logout</button>
-            </div>
         </header>
 
         <div id="authContainer" class="auth-container">
             <h2>Welcome to Highlight.ai</h2>
-            <p>Sign in to save your highlights and preferences</p>
-            <button id="loginBtn" class="btn-primary">Sign in with Google</button>
+            <p>Connect with Notion to start saving your highlights</p>
+            <button id="connectNotionBtn" class="btn-primary">Connect with Notion</button>
         </div>
 
-        <div id="contentContainer" class="content-container">
-            <div class="quick-stats">
-                <div class="stat-card">
-                    <span id="todayCount">0</span>
-                    <h3>Today's Highlights</h3>
-                </div>
-                <div class="stat-card">
-                    <span id="totalCount">0</span>
-                    <h3>Total Highlights</h3>
-                </div>
-            </div>
-
+        <div id="contentContainer" class="content-container" style="display: none;">
             <div class="settings-section">
-                <h3>Settings</h3>
-                <div class="setting-item">
-                    <label for="notionToken">Notion Integration</label>
-                    <div class="input-group">
-                        <input type="password" id="notionToken" placeholder="Enter Notion API token" class="text-input">
-                        <button id="connectNotion" class="btn-secondary">Connect</button>
-                    </div>
-                </div>
+                <h3>Notion Settings</h3>
                 <div class="setting-item">
                     <label for="notionPage">Default Notion Page</label>
-                    <select id="notionPage" class="select-input" disabled>
+                    <select id="notionPage" class="select-input">
                         <option value="">Select a page</option>
                     </select>
                 </div>

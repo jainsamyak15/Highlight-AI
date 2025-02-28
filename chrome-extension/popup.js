@@ -1,102 +1,141 @@
-
 let userState = {
-    isAuthenticated: false,
-    email: null,
-    settings: null,
-    highlights: []
+    isConnectedToNotion: false,
+    notionPages: [],
+    settings: null
 };
-
 
 document.addEventListener('DOMContentLoaded', function() {
     const authContainer = document.getElementById('authContainer');
     const contentContainer = document.getElementById('contentContainer');
-    const loginBtn = document.getElementById('loginBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const userEmail = document.getElementById('userEmail');
-    const defaultLocation = document.getElementById('defaultLocation');
+    const connectNotionBtn = document.getElementById('connectNotionBtn');
+    const notionPageSelect = document.getElementById('notionPage');
     const autoSummarize = document.getElementById('autoSummarize');
-    const highlightsList = document.getElementById('highlightsList');
 
+    checkNotionConnection();
 
-    checkAuthState();
-
-    loginBtn.addEventListener('click', handleLogin);
-    logoutBtn.addEventListener('click', handleLogout);
-    defaultLocation.addEventListener('change', updateSettings);
+    connectNotionBtn.addEventListener('click', handleNotionConnect);
+    notionPageSelect.addEventListener('change', updateNotionPage);
     autoSummarize.addEventListener('change', updateSettings);
-
-    chrome.storage.sync.get(['settings'], function(result) {
-        if (result.settings) {
-            defaultLocation.value = result.settings.defaultLocation || 'notion';
-            autoSummarize.checked = result.settings.autoSummarize || false;
-        }
-    });
 });
 
-function checkAuthState() {
-    chrome.storage.sync.get(['authToken', 'userEmail'], function(result) {
-        if (result.authToken && result.userEmail) {
-            userState.isAuthenticated = true;
-            userState.email = result.userEmail;
-            showAuthenticatedUI();
-            loadHighlights();
+function checkNotionConnection() {
+    chrome.storage.sync.get(['notionToken', 'notionPageId'], function(result) {
+        if (result.notionToken) {
+            userState.isConnectedToNotion = true;
+            showConnectedUI();
+            fetchNotionPages();
         } else {
-            showUnauthenticatedUI();
+            showDisconnectedUI();
         }
     });
 }
 
-function showAuthenticatedUI() {
+function showConnectedUI() {
     document.getElementById('authContainer').style.display = 'none';
     document.getElementById('contentContainer').style.display = 'block';
-    document.getElementById('userEmail').textContent = userState.email;
-    updateStats();
 }
 
-function showUnauthenticatedUI() {
+function showDisconnectedUI() {
     document.getElementById('authContainer').style.display = 'block';
     document.getElementById('contentContainer').style.display = 'none';
 }
 
-async function handleLogin() {
-    try {
-        chrome.identity.getAuthToken({ interactive: true }, function(token) {
-            if (chrome.runtime.lastError) {
-                console.error(chrome.runtime.lastError);
-                return;
-            }
+async function handleNotionConnect() {
+    // Get the redirect URL from Chrome identity
+    const redirectUri = chrome.identity.getRedirectURL();
+    // Replace with your actual client ID from Notion
+    const clientId = 'YOUR_NOTION_CLIENT_ID';
+    const scope = 'page:write page:read';
 
-            fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-                headers: { Authorization: `Bearer ${token}` }
-            })
-            .then(response => response.json())
-            .then(data => {
-                chrome.storage.sync.set({
-                    authToken: token,
-                    userEmail: data.email
-                }, function() {
-                    userState.isAuthenticated = true;
-                    userState.email = data.email;
-                    showAuthenticatedUI();
+    const authUrl = `https://api.notion.com/v1/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&owner=user&scope=${scope}`;
+
+    chrome.identity.launchWebAuthFlow({
+        url: authUrl,
+        interactive: true
+    }, async function(redirectUrl) {
+        if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError);
+            return;
+        }
+
+        if (!redirectUrl) {
+            console.error('No redirect URL received');
+            return;
+        }
+
+        const url = new URL(redirectUrl);
+        const code = url.searchParams.get('code');
+
+        if (code) {
+            try {
+                // Exchange code for access token
+                const response = await fetch('http://localhost:8000/api/notion/exchange-token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        code,
+                        redirectUri
+                    })
                 });
-            });
+
+                const data = await response.json();
+
+                if (data.access_token) {
+                    chrome.storage.sync.set({
+                        notionToken: data.access_token,
+                        notionWorkspaceId: data.workspace_id,
+                        notionBotId: data.bot_id
+                    }, function() {
+                        userState.isConnectedToNotion = true;
+                        showConnectedUI();
+                        fetchNotionPages();
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to exchange token:', error);
+            }
+        }
+    });
+}
+
+async function fetchNotionPages() {
+    try {
+        const response = await chrome.runtime.sendMessage({
+            action: 'getNotionPages'
         });
+
+        if (response.success) {
+            const notionPageSelect = document.getElementById('notionPage');
+            notionPageSelect.innerHTML = '<option value="">Select a page</option>';
+
+            response.pages.forEach(page => {
+                const option = document.createElement('option');
+                option.value = page.id;
+                option.textContent = page.title;
+                notionPageSelect.appendChild(option);
+            });
+
+            // Set selected page if exists
+            chrome.storage.sync.get(['notionPageId'], function(result) {
+                if (result.notionPageId) {
+                    notionPageSelect.value = result.notionPageId;
+                }
+            });
+        }
     } catch (error) {
-        console.error('Login failed:', error);
+        console.error('Failed to fetch Notion pages:', error);
     }
 }
 
-function handleLogout() {
-    chrome.storage.sync.remove(['authToken', 'userEmail'], function() {
-        userState.isAuthenticated = false;
-        userState.email = null;
-        showUnauthenticatedUI();
-    });
+function updateNotionPage() {
+    const pageId = document.getElementById('notionPage').value;
+    chrome.storage.sync.set({ notionPageId: pageId });
 }
 
 function updateSettings() {
     const settings = {
-        defaultLocation: document.getElementById('defaultLocation').value,
         autoSummarize: document.getElementById('autoSummarize').checked
     };
 
@@ -107,40 +146,4 @@ function updateSettings() {
         document.body.appendChild(message);
         setTimeout(() => message.remove(), 2000);
     });
-}
-
-async function loadHighlights() {
-    try {
-        const response = await fetch('https://api.highlight.ai/highlights', {
-            headers: {
-                'Authorization': `Bearer ${await chrome.storage.sync.get(['authToken'])}`
-            }
-        });
-        const highlights = await response.json();
-
-        const highlightsList = document.getElementById('highlightsList');
-        highlightsList.innerHTML = highlights.slice(0, 5).map(highlight => `
-            <div class="highlight-item">
-                <p class="highlight-text">${highlight.text.substring(0, 100)}...</p>
-                <div class="highlight-meta">
-                    <span class="highlight-date">${new Date(highlight.created_at).toLocaleDateString()}</span>
-                    <span class="highlight-source">${new URL(highlight.url).hostname}</span>
-                </div>
-            </div>
-        `).join('');
-
-        updateStats(highlights);
-    } catch (error) {
-        console.error('Failed to load highlights:', error);
-    }
-}
-
-function updateStats(highlights = []) {
-    const today = new Date().toDateString();
-    const todayCount = highlights.filter(h =>
-        new Date(h.created_at).toDateString() === today
-    ).length;
-
-    document.getElementById('todayCount').textContent = todayCount;
-    document.getElementById('totalCount').textContent = highlights.length;
 }
