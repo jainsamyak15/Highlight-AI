@@ -50,14 +50,12 @@ async def exchange_notion_token(request: NotionTokenExchange):
     Exchange Notion OAuth code for access token
     """
     try:
-        # Get client ID and secret from environment variables
         client_id = os.getenv("NOTION_CLIENT_ID")
         client_secret = os.getenv("NOTION_CLIENT_SECRET")
 
         if not client_id or not client_secret:
             raise HTTPException(status_code=500, detail="Notion credentials not configured")
 
-        # Use the redirect URI from the request or fall back to a default
         redirect_uri = request.redirectUri or os.getenv("NOTION_REDIRECT_URI")
 
         response = requests.post(

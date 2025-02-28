@@ -41,9 +41,7 @@ function showDisconnectedUI() {
 }
 
 async function handleNotionConnect() {
-    // Get the redirect URL from Chrome identity
     const redirectUri = chrome.identity.getRedirectURL();
-    // Replace with your actual client ID from Notion
     const clientId = 'YOUR_NOTION_CLIENT_ID';
     const scope = 'page:write page:read';
 
@@ -68,7 +66,6 @@ async function handleNotionConnect() {
 
         if (code) {
             try {
-                // Exchange code for access token
                 const response = await fetch('http://localhost:8000/api/notion/exchange-token', {
                     method: 'POST',
                     headers: {
@@ -117,7 +114,6 @@ async function fetchNotionPages() {
                 notionPageSelect.appendChild(option);
             });
 
-            // Set selected page if exists
             chrome.storage.sync.get(['notionPageId'], function(result) {
                 if (result.notionPageId) {
                     notionPageSelect.value = result.notionPageId;
