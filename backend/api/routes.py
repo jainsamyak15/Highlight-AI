@@ -14,7 +14,7 @@ import requests
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["chrome-extension://*"],
+    allow_origins=["*"],  # Allow all origins for testing
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -58,19 +58,30 @@ async def exchange_notion_token(request: NotionTokenExchange):
 
         redirect_uri = request.redirectUri or os.getenv("NOTION_REDIRECT_URI")
 
+        # Log the request for debugging
+        print(f"Exchanging token with: code={request.code}, redirect_uri={redirect_uri}")
+        print(f"Using client_id: {client_id}")
+        print(f"Using client_secret: {client_secret[:4]}...")  # Only log first few chars for security
+
+        # Basic auth is required for Notion OAuth
+        auth = (client_id, client_secret)
+
         response = requests.post(
             "https://api.notion.com/v1/oauth/token",
+            auth=auth,
             json={
                 "grant_type": "authorization_code",
                 "code": request.code,
-                "redirect_uri": redirect_uri,
-                "client_id": client_id,
-                "client_secret": client_secret
+                "redirect_uri": redirect_uri
             },
             headers={
                 "Content-Type": "application/json"
             }
         )
+
+        # Log the response for debugging
+        print(f"Notion response status: {response.status_code}")
+        print(f"Notion response: {response.text}")
 
         if response.status_code != 200:
             error_detail = f"Failed to exchange token: {response.text}"
@@ -78,6 +89,7 @@ async def exchange_notion_token(request: NotionTokenExchange):
 
         return response.json()
     except Exception as e:
+        print(f"Error in exchange_notion_token: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -118,8 +130,6 @@ async def explain_text(request: ExplainRequest):
             status_code=500,
             detail=f"Failed to generate explanation: {str(e)}"
         )
-
-
 @app.post("/api/save")
 async def save_highlight(request: SaveRequest):
     """

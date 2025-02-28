@@ -1,4 +1,3 @@
-
 let selectedText = '';
 let floatingMenu = null;
 let dictionaryCache = new Map();
@@ -138,7 +137,6 @@ style.textContent = `
 `;
 
 document.head.appendChild(style);
-
 function createFloatingMenu(x, y) {
     const menu = document.createElement('div');
     menu.className = 'highlight-ai-menu';
@@ -247,7 +245,6 @@ function attachMenuListeners(menu) {
                 action: 'summarize',
                 text: selectedText
             });
-
             if (response.success) {
                 showNotification('Summary', response.summary, 12000);
             }
@@ -295,18 +292,42 @@ function attachMenuListeners(menu) {
 
     notionBtn.addEventListener('click', async () => {
         try {
-            const response = await chrome.runtime.sendMessage({
-                action: 'save',
-                text: selectedText,
-                url: window.location.href,
-                title: document.title
-            });
+            // First check if we need to summarize
+            chrome.storage.sync.get(['settings'], async (result) => {
+                const autoSummarize = result.settings && result.settings.autoSummarize;
+                let summary = null;
 
-            if (response.success) {
-                showNotification('Success', 'Saved to Notion!', 3000);
-            } else if (response.error === 'no_token') {
-                showNotification('Error', 'Please set up Notion integration in the extension settings', 5000);
-            }
+                if (autoSummarize) {
+                    try {
+                        showNotification('Processing', 'Generating summary before saving...', 3000);
+                        const summaryResponse = await chrome.runtime.sendMessage({
+                            action: 'summarize',
+                            text: selectedText
+                        });
+
+                        if (summaryResponse.success) {
+                            summary = summaryResponse.summary;
+                        }
+                    } catch (error) {
+                        console.error('Failed to auto-summarize:', error);
+                    }
+                }
+
+                // Now save with or without summary
+                const response = await chrome.runtime.sendMessage({
+                    action: 'save',
+                    text: selectedText,
+                    summary: summary,
+                    url: window.location.href,
+                    title: document.title
+                });
+
+                if (response.success) {
+                    showNotification('Success', 'Saved to Notion!', 3000);
+                } else if (response.error === 'no_token') {
+                    showNotification('Error', 'Please set up Notion integration in the extension settings', 5000);
+                }
+            });
         } catch (error) {
             showNotification('Error', 'Failed to save to Notion', 5000);
         }
@@ -325,7 +346,6 @@ function showNotification(title, message, duration = 3000) {
     `;
 
     container.appendChild(notification);
-
     const closeButton = document.createElement('button');
     closeButton.innerHTML = '×';
     closeButton.style.cssText = `

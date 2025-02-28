@@ -42,5 +42,6 @@
     "scopes": [
       "https://api.notion.com/v1/oauth/authorize"
     ]
-  }
+  },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiPz9X9wZV8HmCkHgOCpz"
 }

@@ -56,6 +56,8 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
 // Handle messages from content script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    console.log("Background received message:", request.action);
+
     switch (request.action) {
         case 'summarize':
             handleSummarize(request.text)
@@ -85,6 +87,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 async function handleSummarize(text) {
     try {
+        console.log("Summarizing text:", text.substring(0, 50) + "...");
         const response = await fetch(`${API_BASE_URL}/api/summarize`, {
             method: 'POST',
             headers: {
@@ -97,6 +100,8 @@ async function handleSummarize(text) {
         });
 
         if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Summarization API error:", errorText);
             throw new Error('Failed to generate summary');
         }
 
@@ -110,9 +115,9 @@ async function handleSummarize(text) {
         throw error;
     }
 }
-
 async function handleExplain(text) {
     try {
+        console.log("Explaining text:", text.substring(0, 50) + "...");
         const response = await fetch(`${API_BASE_URL}/api/explain`, {
             method: 'POST',
             headers: {
@@ -124,6 +129,8 @@ async function handleExplain(text) {
         });
 
         if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Explanation API error:", errorText);
             throw new Error('Failed to generate explanation');
         }
 
@@ -142,11 +149,28 @@ async function handleSave(request) {
     try {
         // Get Notion token from storage
         const settings = await chrome.storage.sync.get(['notionToken', 'notionPageId']);
+        console.log("Save settings:", settings);
 
         if (!settings.notionToken) {
             return { success: false, error: 'no_token' };
         }
 
+        // First, generate a summary if auto-summarize is enabled
+        let summary = null;
+        const autoSummarizeSettings = await chrome.storage.sync.get(['settings']);
+        if (autoSummarizeSettings.settings && autoSummarizeSettings.settings.autoSummarize) {
+            try {
+                const summaryResponse = await handleSummarize(request.text);
+                if (summaryResponse.success) {
+                    summary = summaryResponse.summary;
+                }
+            } catch (error) {
+                console.error("Auto-summarization failed:", error);
+                // Continue without summary if it fails
+            }
+        }
+
+        console.log("Saving highlight to Notion");
         const response = await fetch(`${API_BASE_URL}/api/save`, {
             method: 'POST',
             headers: {
@@ -155,8 +179,10 @@ async function handleSave(request) {
             body: JSON.stringify({
                 highlight: {
                     text: request.text,
+                    summary: summary, // Include the summary if available
                     url: request.url,
                     title: request.title,
+                    user_id: "extension-user", // Add a default user ID
                     created_at: new Date().toISOString()
                 },
                 notion_token: settings.notionToken,
@@ -165,6 +191,8 @@ async function handleSave(request) {
         });
 
         if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Save API error:", errorText);
             throw new Error('Failed to save highlight');
         }
 
@@ -183,28 +211,28 @@ async function handleSave(request) {
 async function getNotionPages() {
     try {
         if (notionPageCache) {
+            console.log("Returning cached Notion pages");
             return { success: true, pages: notionPageCache };
         }
 
         const settings = await chrome.storage.sync.get(['notionToken']);
+        console.log("Getting Notion pages with token");
 
         if (!settings.notionToken) {
             return { success: false, error: 'no_token' };
         }
 
-        const response = await fetch(`${API_BASE_URL}/api/notion/pages`, {
-            headers: {
-                'Authorization': `Bearer ${settings.notionToken}`
-            }
-        });
+        const response = await fetch(`${API_BASE_URL}/api/notion/pages?notion_token=${settings.notionToken}`);
 
         if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Notion pages API error:", errorText);
             throw new Error('Failed to fetch Notion pages');
         }
 
         const data = await response.json();
+        console.log("Notion pages response:", data);
         notionPageCache = data.pages;
-
         return {
             success: true,
             pages: data.pages
@@ -232,4 +260,9 @@ chrome.runtime.onInstalled.addListener((details) => {
             notionPageId: null
         });
     }
+});
+
+// Clear cache when extension is updated
+chrome.runtime.onInstalled.addListener(() => {
+    notionPageCache = null;
 });
