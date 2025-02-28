@@ -42,7 +42,7 @@ function showDisconnectedUI() {
 
 async function handleNotionConnect() {
     const redirectUri = chrome.identity.getRedirectURL();
-    const clientId = 'YOUR_NOTION_CLIENT_ID';
+    const clientId = '1a8d872b-594c-8094-8124-0037f857249e';
     const scope = 'page:write page:read';
 
     const authUrl = `https://api.notion.com/v1/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&owner=user&scope=${scope}`;

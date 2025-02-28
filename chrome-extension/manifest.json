@@ -38,7 +38,7 @@
     "128": "icons/logo_13_0.png"
   },
   "oauth2": {
-    "client_id": "YOUR_NOTION_CLIENT_ID",
+    "client_id": "1a8d872b-594c-8094-8124-0037f857249e",
     "scopes": [
       "https://api.notion.com/v1/oauth/authorize"
     ]
