@@ -77,22 +77,22 @@ style.textContent = `
     height: 16px;
   }
 
-  .highlight-ai-notification {
-    all: initial;
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    padding: 16px;
-    z-index: 2147483647;
-    max-width: 320px;
-    pointer-events: auto;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    border-left: 4px solid #7c3aed;
-    animation: slideInRight 0.3s ease;
-  }
+  // .highlight-ai-notification {
+  //   all: initial;
+  //   position: fixed;
+  //   bottom: 20px;
+  //   right: 20px;
+  //   background: white;
+  //   border-radius: 12px;
+  //   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  //   padding: 16px;
+  //   z-index: 2147483647;
+  //   max-width: 320px;
+  //   pointer-events: auto;
+  //   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  //   border-left: 4px solid #7c3aed;
+  //   animation: slideInRight 0.3s ease;
+  // }
 
   @keyframes slideInRight {
     from { transform: translateX(30px); opacity: 0; }
@@ -104,71 +104,71 @@ style.textContent = `
     to { opacity: 1; }
   }
 
-  .highlight-ai-notification * {
-    all: revert;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  }
-
-  .highlight-ai-notification h4 {
-    margin: 0 0 10px 0;
-    font-size: 16px;
-    color: #111827;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .highlight-ai-notification h4 svg {
-    width: 18px;
-    height: 18px;
-    color: #7c3aed;
-  }
-
-  .highlight-ai-notification p {
-    margin: 0;
-    font-size: 14px;
-    color: #4b5563;
-    line-height: 1.6;
-  }
-
-  .highlight-ai-definition {
-    all: initial;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    padding: 16px;
-    margin-top: 10px;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    font-size: 14px;
-    color: #374151;
-    max-width: 320px;
-    pointer-events: auto;
-    border-left: 4px solid #7c3aed;
-  }
-
-  .highlight-ai-definition * {
-    all: revert;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  }
-
-  .highlight-ai-definition h5 {
-    margin: 0 0 10px 0;
-    font-size: 18px;
-    color: #111827;
-    font-weight: 600;
-  }
-
-  .highlight-ai-definition p {
-    margin: 0 0 10px 0;
-    line-height: 1.5;
-  }
-
-  .highlight-ai-definition .pos {
-    color: #7c3aed;
-    font-weight: 500;
-    font-style: normal;
-  }
+  // .highlight-ai-notification * {
+  //   all: revert;
+  //   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  // }
+  //
+  // .highlight-ai-notification h4 {
+  //   margin: 0 0 10px 0;
+  //   font-size: 16px;
+  //   color: #111827;
+  //   font-weight: 600;
+  //   display: flex;
+  //   align-items: center;
+  //   gap: 6px;
+  // }
+  //
+  // .highlight-ai-notification h4 svg {
+  //   width: 18px;
+  //   height: 18px;
+  //   color: #7c3aed;
+  // }
+  //
+  // .highlight-ai-notification p {
+  //   margin: 0;
+  //   font-size: 14px;
+  //   color: #4b5563;
+  //   line-height: 1.6;
+  // }
+  //
+  // .highlight-ai-definition {
+  //   all: initial;
+  //   background: white;
+  //   border-radius: 12px;
+  //   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  //   padding: 16px;
+  //   margin-top: 10px;
+  //   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  //   font-size: 14px;
+  //   color: #374151;
+  //   max-width: 320px;
+  //   pointer-events: auto;
+  //   border-left: 4px solid #7c3aed;
+  // }
+  //
+  // .highlight-ai-definition * {
+  //   all: revert;
+  //   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  // }
+  //
+  // .highlight-ai-definition h5 {
+  //   margin: 0 0 10px 0;
+  //   font-size: 18px;
+  //   color: #111827;
+  //   font-weight: 600;
+  // }
+  //
+  // .highlight-ai-definition p {
+  //   margin: 0 0 10px 0;
+  //   line-height: 1.5;
+  // }
+  //
+  // .highlight-ai-definition .pos {
+  //   color: #7c3aed;
+  //   font-weight: 500;
+  //   font-style: normal;
+  // }
 
   .highlight-ai-loading {
     display: inline-flex;
