@@ -1,7 +1,6 @@
 const API_BASE_URL = 'http://localhost:8000';
 let notionPageCache = null;
 
-// Initialize context menu
 chrome.runtime.onInstalled.addListener(() => {
     chrome.contextMenus.create({
         id: 'highlight-ai',
@@ -31,7 +30,6 @@ chrome.runtime.onInstalled.addListener(() => {
     });
 });
 
-// Handle context menu clicks
 chrome.contextMenus.onClicked.addListener((info, tab) => {
     const text = info.selectionText;
 
@@ -54,7 +52,6 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     }
 });
 
-// Handle messages from content script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     console.log("Background received message:", request.action);
 
@@ -155,7 +152,6 @@ async function handleSave(request) {
             return { success: false, error: 'no_token' };
         }
 
-        // First, generate a summary if auto-summarize is enabled
         let summary = null;
         const autoSummarizeSettings = await chrome.storage.sync.get(['settings']);
         if (autoSummarizeSettings.settings && autoSummarizeSettings.settings.autoSummarize) {
@@ -179,10 +175,10 @@ async function handleSave(request) {
             body: JSON.stringify({
                 highlight: {
                     text: request.text,
-                    summary: summary, // Include the summary if available
+                    summary: summary,
                     url: request.url,
                     title: request.title,
-                    user_id: "extension-user", // Add a default user ID
+                    user_id: "extension-user",
                     created_at: new Date().toISOString()
                 },
                 notion_token: settings.notionToken,
@@ -250,10 +246,8 @@ function sendResponseToTab(tabId, response) {
     });
 }
 
-// Handle installation
 chrome.runtime.onInstalled.addListener((details) => {
     if (details.reason === 'install') {
-        // Set default settings
         chrome.storage.sync.set({
             autoSummarize: true,
             notionToken: null,
@@ -262,7 +256,6 @@ chrome.runtime.onInstalled.addListener((details) => {
     }
 });
 
-// Clear cache when extension is updated
 chrome.runtime.onInstalled.addListener(() => {
     notionPageCache = null;
 });

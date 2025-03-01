@@ -310,7 +310,6 @@ function renderHighlights() {
         return;
     }
 
-    // Sort highlights by timestamp, newest first
     const sortedHighlights = [...userState.highlights].sort((a, b) => {
         return new Date(b.timestamp) - new Date(a.timestamp);
     });

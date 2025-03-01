@@ -296,7 +296,6 @@ function attachMenuListeners(menu) {
 
     summarizeBtn.addEventListener('click', async () => {
         try {
-            // Show loading state
             const originalContent = summarizeBtn.innerHTML;
             summarizeBtn.innerHTML = `
                 <div class="highlight-ai-loading">
@@ -310,7 +309,6 @@ function attachMenuListeners(menu) {
                 text: selectedText
             });
 
-            // Restore button
             summarizeBtn.innerHTML = originalContent;
 
             if (response.success) {
@@ -324,7 +322,7 @@ function attachMenuListeners(menu) {
 
     defineBtn.addEventListener('click', async () => {
         try {
-            // Show loading state
+
             const originalContent = defineBtn.innerHTML;
             defineBtn.innerHTML = `
                 <div class="highlight-ai-loading">
@@ -336,7 +334,6 @@ function attachMenuListeners(menu) {
             const word = selectedText.split(/\s+/)[0].toLowerCase();
             const definitions = await fetchDefinition(word);
 
-            // Restore button
             defineBtn.innerHTML = originalContent;
 
             if (definitions) {
@@ -363,7 +360,6 @@ function attachMenuListeners(menu) {
 
     explainBtn.addEventListener('click', async () => {
         try {
-            // Show loading state
             const originalContent = explainBtn.innerHTML;
             explainBtn.innerHTML = `
                 <div class="highlight-ai-loading">
@@ -377,7 +373,6 @@ function attachMenuListeners(menu) {
                 text: selectedText
             });
 
-            // Restore button
             explainBtn.innerHTML = originalContent;
 
             if (response.success) {
@@ -391,7 +386,6 @@ function attachMenuListeners(menu) {
 
     notionBtn.addEventListener('click', async () => {
         try {
-            // Show loading state
             const originalContent = notionBtn.innerHTML;
             notionBtn.innerHTML = `
                 <div class="highlight-ai-loading">
@@ -400,7 +394,6 @@ function attachMenuListeners(menu) {
                 </div>
             `;
 
-            // First check if we need to summarize
             chrome.storage.sync.get(['settings'], async (result) => {
                 const autoSummarize = result.settings && result.settings.autoSummarize;
                 let summary = null;
@@ -421,7 +414,6 @@ function attachMenuListeners(menu) {
                     }
                 }
 
-                // Now save with or without summary
                 const response = await chrome.runtime.sendMessage({
                     action: 'save',
                     text: selectedText,
@@ -430,7 +422,6 @@ function attachMenuListeners(menu) {
                     title: document.title
                 });
 
-                // Restore button
                 notionBtn.innerHTML = originalContent;
 
                 if (response.success) {
@@ -445,7 +436,6 @@ function attachMenuListeners(menu) {
                         <p>Your highlight has been successfully saved to your Notion workspace.</p>
                     `, 3000);
 
-                    // Save to local storage for stats
                     saveHighlightLocally(selectedText, summary, window.location.href, document.title);
                 } else if (response.error === 'no_token') {
                     showNotification('Error', `
@@ -475,7 +465,6 @@ function showNotification(title, message, duration = 3000) {
     const notification = document.createElement('div');
     notification.className = 'highlight-ai-notification';
 
-    // Add appropriate icon based on notification type
     let icon = '';
     if (title === 'Summary') {
         icon = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -596,7 +585,6 @@ window.addEventListener('online', () => {
     offlineStorage.syncHighlights();
 });
 
-// Add keyboard shortcut support
 document.addEventListener('keydown', (e) => {
     // Alt+S for summarize
     if (e.altKey && e.key === 's' && selectedText) {
@@ -611,7 +599,6 @@ document.addEventListener('keydown', (e) => {
         });
     }
 
-    // Alt+E for explain
     if (e.altKey && e.key === 'e' && selectedText) {
         e.preventDefault();
         chrome.runtime.sendMessage({
@@ -624,7 +611,6 @@ document.addEventListener('keydown', (e) => {
         });
     }
 
-    // Alt+N for save to Notion
     if (e.altKey && e.key === 'n' && selectedText) {
         e.preventDefault();
         chrome.storage.sync.get(['settings'], async (result) => {
