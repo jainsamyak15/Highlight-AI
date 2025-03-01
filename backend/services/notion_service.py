@@ -18,12 +18,9 @@ class NotionService:
             # Log for debugging
             print(f"Saving to Notion with token: {notion_token[:5]}... and page_id: {page_id}")
 
-            # If no page_id is provided, create a new page in the user's workspace
             if not page_id:
-                # First, find a database to add the page to
                 databases = await NotionService.get_databases(notion_token)
                 if not databases:
-                    # Create a new database if none exists
                     database_id = await NotionService.create_highlights_database(notion_token)
                     print(f"Created new database with ID: {database_id}")
                 else:
@@ -33,7 +30,6 @@ class NotionService:
                 database_id = page_id
                 print(f"Using provided database ID: {database_id}")
 
-            # Create the page in the database
             page_data = {
                 "parent": {"database_id": database_id},
                 "properties": {
@@ -49,7 +45,6 @@ class NotionService:
                 }
             }
 
-            # Add Content property if it exists in the database
             if highlight.text:
                 page_data["properties"]["Content"] = {
                     "rich_text": [
@@ -61,7 +56,6 @@ class NotionService:
                     ]
                 }
 
-            # Add Summary property if it exists in the database and highlight has a summary
             if highlight.summary:
                 page_data["properties"]["Summary"] = {
                     "rich_text": [
@@ -73,7 +67,6 @@ class NotionService:
                     ]
                 }
 
-            # Add Source property if it exists in the database and highlight has a URL
             if highlight.url:
                 page_data["properties"]["Source"] = {
                     "url": highlight.url
@@ -127,7 +120,6 @@ class NotionService:
             data = response.json()
             print(f"Found {len(data.get('results', []))} databases")
 
-            # Format the results
             pages = []
             for result in data.get("results", []):
                 title = ""
