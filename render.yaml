@@ -18,4 +18,5 @@ services:
         sync: false
       - key: NOTION_REDIRECT_URI
         sync: false
+    runtime: python
     healthCheckPath: /api/health
