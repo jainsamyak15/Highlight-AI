@@ -124,7 +124,7 @@ async function handleNotionConnect() {
             if (code) {
                 try {
                     console.log("Exchanging code for token:", code);
-                    const response = await fetch('http://localhost:8000/api/notion/exchange-token', {
+                    const response = await fetch('https://highlight-ai.onrender.com/api/notion/exchange-token', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

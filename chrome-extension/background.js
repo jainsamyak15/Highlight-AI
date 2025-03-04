@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://highlight-ai.onrender.com';
 let notionPageCache = null;
 
 chrome.runtime.onInstalled.addListener(() => {
