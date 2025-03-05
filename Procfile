@@ -1,1 +1,1 @@
-web: cd backend && python main.py
+web: gunicorn -w 4 -k uvicorn.workers.UvicornWorker backend.main:app --timeout 120 --keep-alive 65 --log-level info --bind 0.0.0.0:$PORT
