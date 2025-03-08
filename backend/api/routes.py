@@ -1,15 +1,17 @@
 from fastapi import FastAPI, HTTPException, Depends
 from typing import Optional
 from models.schemas import Highlight
-from services.highlight_service import HighlightService
+from services.highlight_service import HealthService, HighlightService
 from services.notion_service import NotionService
 from services.summarization_service import SummarizationService
 from services.explanation_service import ExplanationService
+from services.health_service import HealthService
 from fastapi.middleware.cors import CORSMiddleware
 import together
 import os
 from pydantic import BaseModel
 import requests
+import asyncio
 
 app = FastAPI()
 app.add_middleware(
@@ -22,27 +24,35 @@ app.add_middleware(
 
 summarization_service = SummarizationService()
 explanation_service = ExplanationService()
+health_service = HealthService()
 
+# Start the keep-alive task
+@app.on_event("startup")
+async def startup_event():
+    asyncio.create_task(health_service.keep_alive())
 
 class NotionTokenExchange(BaseModel):
     code: str
     redirectUri: Optional[str] = None
 
-
 class SummarizeRequest(BaseModel):
     text: str
     max_length: Optional[int] = 200
 
-
 class ExplainRequest(BaseModel):
     text: str
-
 
 class SaveRequest(BaseModel):
     highlight: Highlight
     notion_token: Optional[str] = None
     notion_page_id: Optional[str] = None
 
+@app.get("/api/health")
+async def health_check():
+    """
+    Health check endpoint that returns the application status
+    """
+    return await health_service.health_check()
 
 @app.post("/api/notion/exchange-token")
 async def exchange_notion_token(request: NotionTokenExchange):
@@ -92,7 +102,6 @@ async def exchange_notion_token(request: NotionTokenExchange):
         print(f"Error in exchange_notion_token: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @app.post("/api/summarize")
 async def summarize_text(request: SummarizeRequest):
     """
@@ -113,7 +122,6 @@ async def summarize_text(request: SummarizeRequest):
             detail=f"Failed to generate summary: {str(e)}"
         )
 
-
 @app.post("/api/explain")
 async def explain_text(request: ExplainRequest):
     """
@@ -130,6 +138,7 @@ async def explain_text(request: ExplainRequest):
             status_code=500,
             detail=f"Failed to generate explanation: {str(e)}"
         )
+
 @app.post("/api/save")
 async def save_highlight(request: SaveRequest):
     """
@@ -166,7 +175,6 @@ async def save_highlight(request: SaveRequest):
             detail=f"Failed to save highlight: {str(e)}"
         )
 
-
 @app.get("/api/notion/pages")
 async def get_notion_pages(notion_token: str):
     """
@@ -183,11 +191,3 @@ async def get_notion_pages(notion_token: str):
             status_code=500,
             detail=f"Failed to fetch Notion pages: {str(e)}"
         )
-
-
-@app.get("/api/health")
-async def health_check():
-    """
-    Simple health check endpoint
-    """
-    return {"status": "healthy"}

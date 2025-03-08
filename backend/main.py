@@ -17,5 +17,6 @@ if __name__ == "__main__":
         log_level="info",
         access_log=True,
         timeout_keep_alive=65,  # Increased keep-alive timeout
-        proxy_headers=True  # Trust proxy headers for proper IP handling
+        proxy_headers=True,  # Trust proxy headers for proper IP handling
+        reload=False  # Disable reload in production
     )
