@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends
 from typing import Optional
 from models.schemas import Highlight
-from services.highlight_service import HealthService, HighlightService
+from services.highlight_service import HighlightService
 from services.notion_service import NotionService
 from services.summarization_service import SummarizationService
 from services.explanation_service import ExplanationService
