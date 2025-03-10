@@ -32,15 +32,15 @@ class ExplanationService:
 
             user_prompt = f"""Please explain the following text in clear, simple terms that anyone can understand. Break down complex ideas, define any technical terms, and use examples where helpful.
 
-Text to explain:
-{text}
-
-Guidelines:
-- Use everyday language
-- Break down complex concepts
-- Provide brief examples if needed
-- Maintain accuracy while simplifying
-- End with a one-sentence summary"""
+            Text to explain:
+            {text}
+            
+            Guidelines:
+            - Use everyday language
+            - Break down complex concepts
+            - Provide brief examples if needed
+            - Maintain accuracy while simplifying
+            - End with a one-sentence summary"""
 
             response = client.chat.completions.create(
                 model="mistralai/Mixtral-8x7B-Instruct-v0.1",
