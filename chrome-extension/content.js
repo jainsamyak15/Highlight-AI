@@ -594,7 +594,7 @@ document.addEventListener('keydown', (e) => {
             text: selectedText
         }).then(response => {
             if (response.success) {
-                showNotification('Summary', response.summary, 12000);
+                showNotification('Summary', response.summary, 15000);
             }
         });
     }

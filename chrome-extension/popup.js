@@ -362,7 +362,7 @@ function showEmptyState() {
 
     const learnButton = highlightsList.querySelector('.btn-secondary');
     learnButton.addEventListener('click', function() {
-        chrome.tabs.create({ url: 'https://highlight-ai.notion.site/Getting-Started-with-Highlight-ai-f7d7e2f5b8e84a8d9b5c9f9b9b9b9b9b' });
+        chrome.tabs.create({ url: 'https://github.com/jainsamyak15/Highlight-AI' });
     });
 }
 
