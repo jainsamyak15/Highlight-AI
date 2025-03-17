@@ -20,53 +20,58 @@ style.textContent = `
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
   }
 
-  .highlight-ai-menu {
-    all: initial !important;
-    position: fixed !important;
-    background: white !important;
-    border-radius: 12px !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
-    padding: 10px !important;
-    z-index: 2147483647 !important;
-    pointer-events: auto !important;
-    border: 1px solid rgba(229, 231, 235, 0.8) !important;
-    backdrop-filter: blur(8px) !important;
-    transition: all 0.2s ease !important;
-    animation: highlight-ai-fade-in 0.2s ease !important;
-    margin: 0 !important;
-    text-align: left !important;
-    box-sizing: border-box !important;
-    min-width: auto !important;
-    max-width: none !important;
-    min-height: auto !important;
-    max-height: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-    visibility: visible !important;
-    clip: auto !important;
-    clip-path: none !important;
-    float: none !important;
-    clear: none !important;
-    filter: none !important;
-    user-select: none !important;
-  }
+.highlight-ai-menu {
+  all: initial !important;
+  position: fixed !important;
+  background: white !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+  padding: 10px !important;
+  z-index: 2147483647 !important;
+  pointer-events: auto !important;
+  border: 1px solid rgba(229, 231, 235, 0.8) !important;
+  backdrop-filter: blur(8px) !important;
+  transition: all 0.2s ease !important;
+  animation: highlight-ai-fade-in 0.2s ease !important;
+  margin: 0 !important;
+  text-align: left !important;
+  box-sizing: border-box !important;
+  min-width: auto !important;
+  max-width: none !important;
+  min-height: auto !important;
+  max-height: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+  clip: auto !important;
+  clip-path: none !important;
+  float: none !important;
+  clear: none !important;
+  filter: none !important;
+  user-select: none !important;
+  
+  /* Center positioning properties */
+  top: 25% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
 
-  .highlight-ai-menu * {
-    all: revert !important;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
-    box-sizing: border-box !important;
-    line-height: normal !important;
-    letter-spacing: normal !important;
-    text-transform: none !important;
-    text-decoration: none !important;
-    text-align: left !important;
-    white-space: normal !important;
-    word-spacing: normal !important;
-    direction: ltr !important;
-    border-spacing: 0 !important;
-    font-variant: normal !important;
-    text-shadow: none !important;
-  }
+.highlight-ai-menu * {
+  all: revert !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+  box-sizing: border-box !important;
+  line-height: normal !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  text-decoration: none !important;
+  text-align: left !important;
+  white-space: normal !important;
+  word-spacing: normal !important;
+  direction: ltr !important;
+  border-spacing: 0 !important;
+  font-variant: normal !important;
+  text-shadow: none !important;
+}
 
   .highlight-ai-button-group {
     display: flex !important;
