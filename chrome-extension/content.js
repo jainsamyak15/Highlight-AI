@@ -9,184 +9,172 @@ document.body.appendChild(container);
 const style = document.createElement('style');
 style.textContent = `
   #highlight-ai-container {
-    all: initial;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 0;
-    pointer-events: none;
-    z-index: 2147483647;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    all: initial !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    pointer-events: none !important;
+    z-index: 2147483647 !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
   }
 
   .highlight-ai-menu {
-    all: initial;
-    position: fixed;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    padding: 10px;
-    z-index: 2147483647;
-    pointer-events: auto;
-    border: 1px solid rgba(229, 231, 235, 0.8);
-    backdrop-filter: blur(8px);
-    transition: all 0.2s ease;
-    animation: fadeIn 0.2s ease;
+    all: initial !important;
+    position: fixed !important;
+    background: white !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+    padding: 10px !important;
+    z-index: 2147483647 !important;
+    pointer-events: auto !important;
+    border: 1px solid rgba(229, 231, 235, 0.8) !important;
+    backdrop-filter: blur(8px) !important;
+    transition: all 0.2s ease !important;
+    animation: highlight-ai-fade-in 0.2s ease !important;
+    margin: 0 !important;
+    text-align: left !important;
+    box-sizing: border-box !important;
+    min-width: auto !important;
+    max-width: none !important;
+    min-height: auto !important;
+    max-height: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
+    clip: auto !important;
+    clip-path: none !important;
+    float: none !important;
+    clear: none !important;
+    filter: none !important;
+    user-select: none !important;
   }
 
   .highlight-ai-menu * {
-    all: revert;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    all: revert !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+    box-sizing: border-box !important;
+    line-height: normal !important;
+    letter-spacing: normal !important;
+    text-transform: none !important;
+    text-decoration: none !important;
+    text-align: left !important;
+    white-space: normal !important;
+    word-spacing: normal !important;
+    direction: ltr !important;
+    border-spacing: 0 !important;
+    font-variant: normal !important;
+    text-shadow: none !important;
   }
 
   .highlight-ai-button-group {
-    display: flex;
-    gap: 8px;
-    margin: 0;
-    padding: 0;
+    display: flex !important;
+    gap: 8px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    flex-wrap: nowrap !important;
+    width: auto !important;
+    height: auto !important;
   }
 
   .highlight-ai-button {
-    all: initial;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 10px 14px;
-    border: none;
-    border-radius: 8px;
-    background: #f3f4f6;
-    cursor: pointer;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    color: #4b5563;
-    transition: all 0.2s ease;
-    pointer-events: auto;
+    all: initial !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    padding: 10px 14px !important;
+    border: none !important;
+    border-radius: 8px !important;
+    background: #f3f4f6 !important;
+    cursor: pointer !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: #4b5563 !important;
+    transition: all 0.2s ease !important;
+    pointer-events: auto !important;
+    margin: 0 !important;
+    text-transform: none !important;
+    text-decoration: none !important;
+    text-align: center !important;
+    line-height: 1.5 !important;
+    white-space: nowrap !important;
+    user-select: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    min-width: auto !important;
+    max-width: none !important;
+    min-height: auto !important;
+    max-height: none !important;
   }
 
   .highlight-ai-button:hover {
-    background: #e5e7eb;
-    color: #111827;
-    transform: translateY(-1px);
+    background: #e5e7eb !important;
+    color: #111827 !important;
+    transform: translateY(-1px) !important;
   }
 
   .highlight-ai-button svg {
-    width: 16px;
-    height: 16px;
+    width: 16px !important;
+    height: 16px !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 2 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
   }
 
-  // .highlight-ai-notification {
-  //   all: initial;
-  //   position: fixed;
-  //   bottom: 20px;
-  //   right: 20px;
-  //   background: white;
-  //   border-radius: 12px;
-  //   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  //   padding: 16px;
-  //   z-index: 2147483647;
-  //   max-width: 320px;
-  //   pointer-events: auto;
-  //   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  //   border-left: 4px solid #7c3aed;
-  //   animation: slideInRight 0.3s ease;
-  // }
-
-  @keyframes slideInRight {
-    from { transform: translateX(30px); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
+  @keyframes highlight-ai-slide-in-right {
+    from { transform: translateX(30px) !important; opacity: 0 !important; }
+    to { transform: translateX(0) !important; opacity: 1 !important; }
   }
 
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  @keyframes highlight-ai-fade-in {
+    from { opacity: 0 !important; }
+    to { opacity: 1 !important; }
   }
-
-  // .highlight-ai-notification * {
-  //   all: revert;
-  //   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  // }
-  //
-  // .highlight-ai-notification h4 {
-  //   margin: 0 0 10px 0;
-  //   font-size: 16px;
-  //   color: #111827;
-  //   font-weight: 600;
-  //   display: flex;
-  //   align-items: center;
-  //   gap: 6px;
-  // }
-  //
-  // .highlight-ai-notification h4 svg {
-  //   width: 18px;
-  //   height: 18px;
-  //   color: #7c3aed;
-  // }
-  //
-  // .highlight-ai-notification p {
-  //   margin: 0;
-  //   font-size: 14px;
-  //   color: #4b5563;
-  //   line-height: 1.6;
-  // }
-  //
-  // .highlight-ai-definition {
-  //   all: initial;
-  //   background: white;
-  //   border-radius: 12px;
-  //   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  //   padding: 16px;
-  //   margin-top: 10px;
-  //   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  //   font-size: 14px;
-  //   color: #374151;
-  //   max-width: 320px;
-  //   pointer-events: auto;
-  //   border-left: 4px solid #7c3aed;
-  // }
-  //
-  // .highlight-ai-definition * {
-  //   all: revert;
-  //   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  // }
-  //
-  // .highlight-ai-definition h5 {
-  //   margin: 0 0 10px 0;
-  //   font-size: 18px;
-  //   color: #111827;
-  //   font-weight: 600;
-  // }
-  //
-  // .highlight-ai-definition p {
-  //   margin: 0 0 10px 0;
-  //   line-height: 1.5;
-  // }
-  //
-  // .highlight-ai-definition .pos {
-  //   color: #7c3aed;
-  //   font-weight: 500;
-  //   font-style: normal;
-  // }
 
   .highlight-ai-loading {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   .highlight-ai-loading .spinner {
-    width: 16px;
-    height: 16px;
-    border: 2px solid rgba(124, 58, 237, 0.3);
-    border-radius: 50%;
-    border-top-color: #7c3aed;
-    animation: spin 1s linear infinite;
+    width: 16px !important;
+    height: 16px !important;
+    border: 2px solid rgba(124, 58, 237, 0.3) !important;
+    border-radius: 50% !important;
+    border-top-color: #7c3aed !important;
+    animation: highlight-ai-spin 1s linear infinite !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
-  @keyframes spin {
-    to { transform: rotate(360deg); }
+  @keyframes highlight-ai-spin {
+    to { transform: rotate(360deg) !important; }
+  }
+
+  /* Ensure text selection remains visible */
+  ::selection {
+    background: rgba(124, 58, 237, 0.2) !important;
+    color: inherit !important;
   }
 `;
 
@@ -224,8 +212,37 @@ function createFloatingMenu(x, y) {
         </div>
     `;
 
-    menu.style.left = `${x}px`;
-    menu.style.top = `${y}px`;
+    // Get selection coordinates
+    const selection = window.getSelection();
+    const range = selection.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+
+    // Calculate menu position
+    menu.style.visibility = 'hidden';
+    document.body.appendChild(menu);
+    const menuRect = menu.getBoundingClientRect();
+    document.body.removeChild(menu);
+    menu.style.visibility = 'visible';
+
+    // Center the menu above the selection
+    const menuLeft = rect.left + (rect.width / 2) - (menuRect.width / 2);
+    const menuTop = rect.top - menuRect.height - 10; // 10px gap between menu and selection
+
+    // Ensure menu stays within viewport bounds
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    let finalLeft = Math.max(10, Math.min(menuLeft, viewportWidth - menuRect.width - 10));
+    let finalTop = Math.max(10, menuTop);
+
+    // If menu would appear below viewport, show it above the selection
+    if (finalTop + menuRect.height > viewportHeight) {
+        finalTop = rect.top - menuRect.height - 10;
+    }
+
+    // Apply the calculated position
+    menu.style.left = `${finalLeft + window.scrollX}px`;
+    menu.style.top = `${finalTop + window.scrollY}px`;
 
     return menu;
 }
@@ -244,16 +261,66 @@ document.addEventListener('mouseup', (e) => {
     selectedText = selection.toString().trim();
 
     if (selectedText && selectedText.length > 0) {
-        const rect = selection.getRangeAt(0).getBoundingClientRect();
-        floatingMenu = createFloatingMenu(
-            e.clientX,
-            rect.top + window.scrollY - 50
-        );
-
+        floatingMenu = createFloatingMenu();
         container.appendChild(floatingMenu);
         attachMenuListeners(floatingMenu);
     }
 });
+
+let scrollTimeout;
+window.addEventListener('scroll', () => {
+    if (floatingMenu) {
+        floatingMenu.style.display = 'none';
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            const selection = window.getSelection();
+            if (selection.toString().trim() === selectedText) {
+                const range = selection.getRangeAt(0);
+                const rect = range.getBoundingClientRect();
+
+                // Recalculate position on scroll
+                const menuRect = floatingMenu.getBoundingClientRect();
+                const menuLeft = rect.left + (rect.width / 2) - (menuRect.width / 2);
+                const menuTop = rect.top - menuRect.height - 10;
+
+                const viewportWidth = window.innerWidth;
+                const finalLeft = Math.max(10, Math.min(menuLeft, viewportWidth - menuRect.width - 10));
+
+                floatingMenu.style.top = `${menuTop + window.scrollY}px`;
+                floatingMenu.style.left = `${finalLeft + window.scrollX}px`;
+                floatingMenu.style.display = 'block';
+            } else {
+                floatingMenu.remove();
+                floatingMenu = null;
+            }
+        }, 100);
+    }
+});
+
+// document.addEventListener('mouseup', (e) => {
+//     if (floatingMenu && floatingMenu.contains(e.target)) {
+//         return;
+//     }
+//
+//     if (floatingMenu) {
+//         floatingMenu.remove();
+//         floatingMenu = null;
+//     }
+//
+//     const selection = window.getSelection();
+//     selectedText = selection.toString().trim();
+//
+//     if (selectedText && selectedText.length > 0) {
+//         const rect = selection.getRangeAt(0).getBoundingClientRect();
+//         floatingMenu = createFloatingMenu(
+//             e.clientX,
+//             rect.top + window.scrollY - 50
+//         );
+//
+//         container.appendChild(floatingMenu);
+//         attachMenuListeners(floatingMenu);
+//     }
+// });
 
 document.addEventListener('mousedown', (e) => {
     if (floatingMenu && !floatingMenu.contains(e.target)) {
