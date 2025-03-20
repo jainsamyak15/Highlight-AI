@@ -40,4 +40,4 @@ class HealthService:
                 except Exception as e:
                     logger.error(f"Keep-alive request failed: {str(e)}")
 
-                await asyncio.sleep(600)  # Wait 10 minutes before next request
+                await asyncio.sleep(600)
